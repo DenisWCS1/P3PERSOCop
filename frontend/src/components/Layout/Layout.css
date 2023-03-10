@@ -1,0 +1,4 @@
+.wrapper {
+  height: calc(100vh - (96px + 64px));
+  margin: 0 1rem;
+}
