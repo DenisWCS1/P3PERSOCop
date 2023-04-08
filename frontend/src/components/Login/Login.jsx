@@ -1,4 +1,4 @@
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useState, useContext } from "react";
 import SharedContext from "@assets/Context/sharedContext";
 
@@ -10,8 +10,9 @@ function Login() {
     password: "",
   });
   const navigate = useNavigate();
-  const location = useLocation();
+
   const [error, setError] = useState(null);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setInputValue({
@@ -40,7 +41,7 @@ function Login() {
         if (response.token) {
           localStorage.setItem("token", response.token);
           setToken(response.token);
-          if (location.pathname === "/login") navigate("/");
+          navigate("/");
         } else {
           throw new Error("Mot de passe ou email incorrect");
         }
@@ -51,8 +52,8 @@ function Login() {
   };
 
   return (
-    <div className="pt-2">
-      <div className="flex justify-center items-center  ">
+    <div className="pt-[7rem] ">
+      <div className="flex  flex-col justify-center items-center ">
         <div className=" flex flex-col items-center text-center w-3/4 max-w-[450px]">
           <form
             onSubmit={handleSubmit}
@@ -88,10 +89,6 @@ function Login() {
             <h2 className="text-red-500 font-semibold animate-bounce">
               {error && <div>{error}</div>}
             </h2>
-            <NavLink className="flex justify-between text-gray-400 py-2">
-              Mot de passe oublié ?
-            </NavLink>
-
             <button
               type="submit"
               className="w-full my-5 py-2 bg-teal-500 shadow-lg text-white font-semibold rounded-lg"

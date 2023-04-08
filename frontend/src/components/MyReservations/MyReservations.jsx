@@ -21,16 +21,16 @@ function Myreservations({
 
   /** ***********************************************
 Fetch return GET
-reservation.id
-reservation.start_datetime AS start
-reservation.end_datetime AS end
-location.city_name AS localisation, 
-room.name AS nom,       
+reservation.id int
+start timestamp
+end timestamp
+localisation int
+nom string
 ************************************************ */
   useEffect(() => {
     setIsLoading(true);
     function fetchData() {
-      fetch(`${baseUrl}/myReservations/${user.id}`, {
+      fetch(`${baseUrl}/reservations/${user.id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -53,8 +53,13 @@ room.name AS nom,
   }, [user, updateResa]);
 
   /** ****************************************************
- Fetch return delete reservation in reservation table     
-***************************************************** */
+Fetch return DELETE reservation in reservation table
+reservation.id int
+localisation int
+start timestamp
+end timestamp
+nom string
+************************************************ */
   const handleDelete = (id) => {
     fetch(`${baseUrl}/reservation/${id}`, {
       method: "DELETE",
@@ -66,7 +71,7 @@ room.name AS nom,
       .then((response) => {
         if (response.ok) {
           setShowModalBtns(false);
-          setshowMessage("Votre réservation à bien été supprimée");
+          setshowMessage("Votre réservation a bien été supprimée");
           setShowModal(true);
           setUpdateResa(!updateResa);
         } else {
@@ -173,6 +178,7 @@ room.name AS nom,
           ))}
         </tbody>
       </table>
+      <div className="h-28" />
     </>
   );
 }

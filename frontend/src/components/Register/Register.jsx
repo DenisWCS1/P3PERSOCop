@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import SharedContext from "@assets/Context/sharedContext";
 
 function Register() {
-  // astuce pour éviter de toujours rentrer url http etc
   const baseUrl = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
   const [inputRegisterValue, setIinputRegisterValue] = useState({
@@ -22,6 +21,14 @@ function Register() {
   const [errors, setErrors] = useState([]);
   const { setIsLoading } = useContext(SharedContext);
 
+  /** ****************************************************
+Fetch return POST user in user table
+firstname varchar
+lastname varchar
+email varchar
+password varchar
+************************************************ */
+
   const handleSubmit = (ev) => {
     ev.preventDefault();
     fetch(`${baseUrl}/user`, {
@@ -35,22 +42,21 @@ function Register() {
         const contentType = r.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
           alert(
-            `Bienvenue, ${inputRegisterValue.firstname} ${inputRegisterValue.lastname} `
+            `Bienvenue, ${inputRegisterValue.firstname} ${inputRegisterValue.lastname}, pour valider votre compte veuillez vous connecter `
           );
-          navigate("/");
-          throw new TypeError("Oops, we haven't got JSON!");
+          navigate("/login");
+          return r;
         }
 
         return r.json();
       })
 
       .then((r) => {
-        if (!r.ok) {
+        if (r && !r.ok) {
           setErrors(r.validationErrors);
           return Promise.reject(new Error("errors http"));
         }
-        setIsLoading(false);
-        return console.warn("error network");
+        return r;
       })
       .catch((e) => {
         setIsLoading(false);
@@ -59,7 +65,7 @@ function Register() {
   };
   return (
     <div>
-      <div className="flex justify-center items-center  pt-2 ">
+      <div className="flex justify-center items-center pt-[7rem]">
         <div className=" flex flex-col items-center text-center w-3/4 max-w-[450px]">
           <form
             onSubmit={handleSubmit}
@@ -109,9 +115,7 @@ function Register() {
               />
             </div>
             <ul className="text-red-500 font-semibold">
-              {errors.map((error) => (
-                <li>{error.msg}</li>
-              ))}
+              {errors && errors.map((error) => <li>{error.msg}</li>)}
             </ul>
 
             <button

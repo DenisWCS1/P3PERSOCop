@@ -20,7 +20,7 @@ export default function Header() {
     setUser();
   };
   return (
-    <header className="h-16 mx-auto mb-4 pr-6 flex items-center justify-between py-3 bg-dark-100">
+    <header className="box-border h-16 mx-auto mb-4 pr-6 flex items-center justify-between py-3 bg-dark-100">
       <div className=" flex items-center justify-between lg:justify-evenly">
         <NavLink className="w-[6rem] rounded-full lg:w-[8rem]" to="/">
           <img src={logoSncf} alt="logoSncf" />
@@ -31,7 +31,6 @@ export default function Header() {
       </div>
 
       <nav>
-        {/* Mobile-Menu */}
         <section className="flex flex-end ">
           <div className="UserConnected pr-8  font-semibold text-turquoise-100">
             {user ? `${user.firstname}` : "Invité(e)"}
@@ -66,7 +65,7 @@ export default function Header() {
                   className="font-semibold text-turquoise-100 my-8 pb-6"
                 >
                   <NavLink to="#" onClick={handleDisconnect}>
-                    Se Déconnecter
+                    Se déconnecter
                   </NavLink>
                 </button>
               ) : (

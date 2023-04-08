@@ -7,25 +7,24 @@ class RoomManager extends AbstractManager {
 
   filter(start, end, location) {
     const sqlvalues = [];
-    const sql = ` SELECT room.id, room.capacity, room.name, room.plan, room.url_picture, location.city_name FROM ${
+    const sql = ` SELECT room.id, room.capacity, room.name, room.url_picture, location.city_name FROM ${
       this.table
     } 
         LEFT JOIN location ON room.fk_location = location.id 
        WHERE  ${location !== null ? "location.id = ? and" : ""}
         room.id NOT IN(
-            SELECT room.id FROM room 
+            SELECT room.id FROM ${this.table} 
             INNER JOIN reservation as r
-            ON room.id = r.fk_room  where 
-            (r.start_datetime  BETWEEN STR_TO_DATE(?, '%d-%m-%Y %H:%i:%s') AND STR_TO_DATE(?, '%d-%m-%Y %H:%i:%s')) AND
-            (r.end_datetime  BETWEEN STR_TO_DATE(?, '%d-%m-%Y %H:%i:%s') AND STR_TO_DATE(?, '%d-%m-%Y %H:%i:%s'))
+            ON room.id = r.fk_room  WHERE 
+            (r.start_datetime  <= STR_TO_DATE(?, '%d-%m-%Y %H:%i:%s') AND r.end_datetime  >= STR_TO_DATE(?, '%d-%m-%Y %H:%i:%s'))
             GROUP BY room.id)
           order by room.id asc`;
     if (location !== null) {
-      sqlvalues.push(location, start, end, start, end);
+      sqlvalues.push(location, end, start);
     } else {
-      sqlvalues.push(start, end, start, end);
+      sqlvalues.push(end, start);
     }
-
+    // The "query" method called on the database object takes two parameters, the query (sql) and the values(sqlvalues). It returns a promise that will be resolved in the controller.
     return this.database.query(sql, sqlvalues);
   }
 }

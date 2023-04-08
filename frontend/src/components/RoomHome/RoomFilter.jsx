@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import ReactDatePicker, {
   registerLocale,
   setDefaultLocale,
@@ -7,7 +7,6 @@ import ReactDatePicker, {
 import "react-datepicker/dist/react-datepicker.css";
 import fr from "date-fns/locale/fr";
 
-const baseUrl = import.meta.env.VITE_BACKEND_URL;
 registerLocale("fr", fr);
 setDefaultLocale("fr");
 
@@ -18,9 +17,10 @@ function RoomFilter({
   setEnded,
   setLocationid,
   locationid,
+  getLocation,
+  setAllLocation,
+  allLocation,
 }) {
-  const [allLocation, setAllLocation] = useState([]);
-
   const handleChange = (e) => {
     setStarted(started);
     setEnded(ended);
@@ -32,50 +32,59 @@ function RoomFilter({
     setEnded(new Date());
     setLocationid(1);
     setAllLocation([]);
+    getLocation();
   };
+
+  /** ****************************************************
+Fetch return GET reservation in reservation table
+city_name varchar
+created_at timestamp
+updated_at timestamp
+****************************************************** */
   useEffect(() => {
-    fetch(`${baseUrl}/location`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((jsonData) => {
-        setAllLocation(jsonData);
-      });
-  }, [locationid, allLocation]);
+    getLocation();
+  }, [locationid]);
 
   return (
-    <div className="flex flex-wrap rounded-lg bg-dark-100 border-b px-4 py-2 sm:flex flex-row justify-center ">
-      <div className="flex flex-col text-white ml-5 w-64 mb-5">
-        <p> Début :</p>
+    <div className=" flex flex-wrap rounded-lg bg-dark-100 border-b justify-around lg:justify-center pt-[1.1rem]">
+      <div className="flex flex-col text-white w-[200] md:mb-6 mb-2 sm:mb-none">
+        <div>
+          <p> Début :</p>
+        </div>
         <ReactDatePicker
-          className="bg-blueDuck-100 text-white px-4 py-2 rounded-lg"
+          className="bg-blueDuck-100 text-white rounded-lg h-8 text-center lg:mr-6"
           id="start"
           selected={started}
           onChange={(str) => setStarted(str)}
           showTimeSelect
           timeIntervals={15}
+          aria-labelledby="set-start date time"
+          title="set-start date time"
           dateFormat="dd-MM-yyyy HH:mm:ss"
         />
       </div>
-      <div className="flex flex-col text-white ml-5 w-64 mb-5">
-        <p> Fin :</p>
+      <div className="flex flex-col text-white w-[200]">
+        <div>
+          <p>Fin :</p>
+        </div>
         <ReactDatePicker
-          className="bg-blueDuck-100 text-white px-4 py-2 rounded-lg"
+          className="bg-blueDuck-100 text-white rounded-lg  h-8 text-center lg:mr-6"
           id="end"
           selected={ended}
           onChange={(end) => setEnded(end)}
           showTimeSelect
           timeIntervals={15}
+          aria-labelledby="set-end date time"
           dateFormat="dd-MM-yyyy HH:mm:ss"
         />
       </div>
-      <div className="flex justify-center px-2 py-5 w-60 h-20">
+      <div className="mt-6">
         <select
           name="loc"
           selected={allLocation}
           onChange={handleChange}
           id="loc"
-          className="Localisation bg-blueDuck-100 text-white text-center flex flex-col w-72 h-11 rounded-lg sm:px-5 p-2"
+          className="Localisation bg-blueDuck-100 text-white rounded-lg min-w-[183px] h-8 py-[0.3rem] lg:mr-6"
         >
           {allLocation.map((location) => (
             <option
@@ -88,10 +97,10 @@ function RoomFilter({
           ))}
         </select>
       </div>
-      <div className="flex flex-col px-2 py-5 w-60 h-20 sm: mt-1">
+      <div className="flex flex-col min-w-[182px] mt-6">
         <button
           type="button"
-          className="button bg-blueDuck-100 text-white rounded-lg sm:px-2 py-2"
+          className="button bg-blueDuck-100 text-white rounded-lg h-8 mb-4"
           onClick={reset}
         >
           Reset
@@ -106,6 +115,16 @@ RoomFilter.propTypes = {
   setEnded: PropTypes.func.isRequired,
   setLocationid: PropTypes.func.isRequired,
   setStarted: PropTypes.func.isRequired,
+  setAllLocation: PropTypes.func.isRequired,
+  getLocation: PropTypes.func.isRequired,
+  allLocation: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number,
+      city_name: PropTypes.string,
+      created_at: PropTypes.string,
+      updated_at: PropTypes.string,
+    })
+  ).isRequired,
   locationid: PropTypes.node.isRequired,
 };
 export default RoomFilter;
