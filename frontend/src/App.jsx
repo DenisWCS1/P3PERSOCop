@@ -144,6 +144,7 @@ function App() {
               }
             />
             <Route path="/erreur" element={<ErrorPage />} />
+            <Route path="*" element={<ErrorPage />} />
           </Routes>
 
           {isLoading && <Loader />}

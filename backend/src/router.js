@@ -4,7 +4,19 @@ const { hashPassword, verifyToken } = require("./controllers/auth");
 require("dotenv").config();
 
 const router = express.Router();
+
+const rateLimit = require("express-rate-limit");
+
 router.use(cors());
+// Use global rate limit
+router.use(
+  rateLimit({
+    max: 5, // 5 requêtes maximum
+    windowMs: 60 * 1000, // par minute (60 secondes)
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  })
+);
 
 const userControllers = require("./controllers/userControllers");
 const roomControllers = require("./controllers/roomControllers");
